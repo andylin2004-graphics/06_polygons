@@ -342,4 +342,80 @@ impl Matrix {
         }
         return matrix;
     }
+
+    ///======== void add_polygon() ==========
+    /// 
+    ///Inputs:   struct matrix *polygons
+    /// 
+    ///            x0: f32
+    /// 
+    ///            y0: f32
+    /// 
+    ///            z0: f32
+    /// 
+    ///            x1: f32
+    /// 
+    ///            y1: f32
+    /// 
+    ///            z1: f32
+    /// 
+    ///            x2: f32
+    /// 
+    ///            y2: f32
+    /// 
+    ///            z2: f32
+    /// 
+    ///Returns:
+    /// 
+    ///Adds the vertices (x0, y0, z0), (x1, y1, z1)
+    ///and (x2, y2, z2) to the polygon matrix. They
+    ///define a single triangle surface.
+    ///====================
+    pub fn add_polygon( &mut self, 
+        x0: f32, y0: f32, z0: f32, 
+        x1: f32, y1: f32, z1: f32, 
+        x2: f32, y2: f32, z2: f32 ) {
+            self.add_point(x0, y0, z0);
+            self.add_point(x1, y1, z1);
+            self.add_point(x2, y2, z2);
+    }
+
+    ///======== void draw_polygons() ==========
+    /// 
+    ///Inputs:   struct matrix *polygons
+    /// 
+    ///screen s
+    /// 
+    ///color c
+    /// 
+    ///Returns:
+    /// 
+    ///Goes through polygons 3 points at a time, drawing
+    ///lines connecting each points to create bounding triangles
+    ///====================
+    pub fn draw_polygons( &mut self, s: Image, c: Color ) {
+        for i in (0..self.matrix_array[0].len()).step_by(3) {
+            s.draw_line(
+                self.matrix_array[0][i] as i32,
+                self.matrix_array[1][i] as i32,
+                self.matrix_array[0][i + 1] as i32,
+                self.matrix_array[1][i + 1] as i32,
+                c
+            );
+            s.draw_line(
+                self.matrix_array[0][i + 1] as i32,
+                self.matrix_array[1][i + 1] as i32,
+                self.matrix_array[0][i + 2] as i32,
+                self.matrix_array[1][i + 2] as i32,
+                c
+            );
+            s.draw_line(
+                self.matrix_array[0][i + 2] as i32,
+                self.matrix_array[1][i + 2] as i32,
+                self.matrix_array[0][i] as i32,
+                self.matrix_array[1][i] as i32,
+                c
+            );
+        }
+    }
 }
