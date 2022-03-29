@@ -97,6 +97,45 @@ impl Image {
             );
         }
     }
+
+    ///======== void draw_polygons() ==========
+    /// 
+    ///Inputs:   struct matrix *polygons
+    /// 
+    ///screen s
+    /// 
+    ///color c
+    /// 
+    ///Returns:
+    /// 
+    ///Goes through polygons 3 points at a time, drawing
+    ///lines connecting each points to create bounding triangles
+    ///====================
+    pub fn draw_polygons( &mut self, polygons: &Matrix, c: Color ) {
+        for i in (0..polygons.matrix_array[0].len()).step_by(3) {
+            self.draw_line(
+                polygons.matrix_array[0][i] as i32,
+                polygons.matrix_array[1][i] as i32,
+                polygons.matrix_array[0][i + 1] as i32,
+                polygons.matrix_array[1][i + 1] as i32,
+                c
+            );
+            self.draw_line(
+                polygons.matrix_array[0][i + 1] as i32,
+                polygons.matrix_array[1][i + 1] as i32,
+                polygons.matrix_array[0][i + 2] as i32,
+                polygons.matrix_array[1][i + 2] as i32,
+                c
+            );
+            self.draw_line(
+                polygons.matrix_array[0][i + 2] as i32,
+                polygons.matrix_array[1][i + 2] as i32,
+                polygons.matrix_array[0][i] as i32,
+                polygons.matrix_array[1][i] as i32,
+                c
+            );
+        }
+    }
 }
 
 impl Matrix {
@@ -198,18 +237,19 @@ impl Matrix {
     /// upper-left-front corner is (x, y, z) with width,
     /// height and depth dimensions.
     pub fn add_box(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
-        self.add_edge(x, y, z, x + width, y, z);
-        self.add_edge(x, y, z, x, y - height, z);
-        self.add_edge(x, y, z, x, y, z - depth);
-        self.add_edge(x + width, y, z, x + width, y - height, z);
-        self.add_edge(x + width, y, z, x + width, y, z - depth);
-        self.add_edge(x, y - height, z, x + width, y - height, z);
-        self.add_edge(x, y - height, z, x, y - height, z - depth);
-        self.add_edge(x, y, z - depth, x + width, y, z - depth);
-        self.add_edge(x, y, z - depth, x, y - height, z - depth);
-        self.add_edge(x + width, y - height, z, x + width, y - height, z - depth);
-        self.add_edge(x + width, y, z - depth, x + width, y - height, z - depth);
-        self.add_edge(x, y - height, z - depth, x + width, y - height, z - depth);
+        self.add_polygon(x, y, z, x + width, y, z, x, y - height, z);
+        // self.add_edge(x, y, z, x + width, y, z);
+        // self.add_edge(x, y, z, x, y - height, z);
+        // self.add_edge(x, y, z, x, y, z - depth);
+        // self.add_edge(x + width, y, z, x + width, y - height, z);
+        // self.add_edge(x + width, y, z, x + width, y, z - depth);
+        // self.add_edge(x, y - height, z, x + width, y - height, z);
+        // self.add_edge(x, y - height, z, x, y - height, z - depth);
+        // self.add_edge(x, y, z - depth, x + width, y, z - depth);
+        // self.add_edge(x, y, z - depth, x, y - height, z - depth);
+        // self.add_edge(x + width, y - height, z, x + width, y - height, z - depth);
+        // self.add_edge(x + width, y, z - depth, x + width, y - height, z - depth);
+        // self.add_edge(x, y - height, z - depth, x + width, y - height, z - depth);
     }
 
     /// add_sphere()
@@ -378,44 +418,5 @@ impl Matrix {
             self.add_point(x0, y0, z0);
             self.add_point(x1, y1, z1);
             self.add_point(x2, y2, z2);
-    }
-
-    ///======== void draw_polygons() ==========
-    /// 
-    ///Inputs:   struct matrix *polygons
-    /// 
-    ///screen s
-    /// 
-    ///color c
-    /// 
-    ///Returns:
-    /// 
-    ///Goes through polygons 3 points at a time, drawing
-    ///lines connecting each points to create bounding triangles
-    ///====================
-    pub fn draw_polygons( &mut self, s: Image, c: Color ) {
-        for i in (0..self.matrix_array[0].len()).step_by(3) {
-            s.draw_line(
-                self.matrix_array[0][i] as i32,
-                self.matrix_array[1][i] as i32,
-                self.matrix_array[0][i + 1] as i32,
-                self.matrix_array[1][i + 1] as i32,
-                c
-            );
-            s.draw_line(
-                self.matrix_array[0][i + 1] as i32,
-                self.matrix_array[1][i + 1] as i32,
-                self.matrix_array[0][i + 2] as i32,
-                self.matrix_array[1][i + 2] as i32,
-                c
-            );
-            s.draw_line(
-                self.matrix_array[0][i + 2] as i32,
-                self.matrix_array[1][i + 2] as i32,
-                self.matrix_array[0][i] as i32,
-                self.matrix_array[1][i] as i32,
-                c
-            );
-        }
     }
 }
