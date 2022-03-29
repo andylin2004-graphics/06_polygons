@@ -133,7 +133,12 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
                 }
             }
             "apply"=>{
-                points.multiply_matrixes(&transform);
+                if points.matrix_array.len() > 0{
+                    points.multiply_matrixes(&transform);
+                }
+                if polygons.matrix_array.len() > 0{
+                    polygons.multiply_matrixes(&transform);
+                }
             }
             "display"=>{
                 screen.clear();
