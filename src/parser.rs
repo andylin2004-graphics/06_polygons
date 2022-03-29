@@ -69,7 +69,7 @@ use std::f32;
 /// radius2 is the full radius of the torus (the translation factor). You can think of this as the distance from the center of the torus to the center of any circular slice of the torus.
 ///
 /// See the file script for an example of the file format
-pub fn parse_file( fname: &str, points: &mut Matrix, transform: &mut Matrix, screen: &mut Image, color: Color ) -> io::Result<()>{
+pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, transform: &mut Matrix, screen: &mut Image, color: Color ) -> io::Result<()>{
     let file = File::open(&fname)?;
     let reader = BufReader::new(file);
     let mut doc_lines = vec![String::new(); 0];
@@ -137,7 +137,12 @@ pub fn parse_file( fname: &str, points: &mut Matrix, transform: &mut Matrix, scr
             }
             "display"=>{
                 screen.clear();
-                screen.draw_lines(&points, color);
+                if points.matrix_array.len() > 0{
+                    screen.draw_lines(&points, color);
+                }
+                if polygons.matrix_array.len() > 0{
+                    screen.draw_polygons(&polygons, color);
+                }
                 screen.display();
             }
             "save"=>{
@@ -194,7 +199,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, transform: &mut Matrix, scr
                     params.push(input.parse().unwrap());
                 }
 
-                points.add_box(params[0], params[1], params[2], params[3], params[4], params[5]);
+                polygons.add_box(params[0], params[1], params[2], params[3], params[4], params[5]);
             }
             "sphere"=>{
                 i += 1;
@@ -203,7 +208,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, transform: &mut Matrix, scr
                     params.push(input.parse().unwrap());
                 }
 
-                points.add_sphere(params[0], params[1], params[2], params[3], 0.05);
+                polygons.add_sphere(params[0], params[1], params[2], params[3], 0.05);
             }
             "torus"=>{
                 i += 1;
@@ -212,7 +217,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, transform: &mut Matrix, scr
                     params.push(input.parse().unwrap());
                 }
 
-                points.add_torus(params[0], params[1], params[2], params[3], params[4], f32::consts::PI/10.0);
+                polygons.add_torus(params[0], params[1], params[2], params[3], params[4], f32::consts::PI/10.0);
             }
             _=>{
                 panic!("Invalid command {} at line {}.", doc_lines[i], i+1);
