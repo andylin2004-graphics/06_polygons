@@ -236,20 +236,17 @@ impl Matrix {
     /// add the points for a rectagular prism whose
     /// upper-left-front corner is (x, y, z) with width,
     /// height and depth dimensions.
-    pub fn add_box(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
-        self.add_polygon(x, y, z, x + width, y, z, x, y - height, z);
-        // self.add_edge(x, y, z, x + width, y, z);
-        // self.add_edge(x, y, z, x, y - height, z);
-        // self.add_edge(x, y, z, x, y, z - depth);
-        // self.add_edge(x + width, y, z, x + width, y - height, z);
-        // self.add_edge(x + width, y, z, x + width, y, z - depth);
-        // self.add_edge(x, y - height, z, x + width, y - height, z);
-        // self.add_edge(x, y - height, z, x, y - height, z - depth);
-        // self.add_edge(x, y, z - depth, x + width, y, z - depth);
-        // self.add_edge(x, y, z - depth, x, y - height, z - depth);
-        // self.add_edge(x + width, y - height, z, x + width, y - height, z - depth);
-        // self.add_edge(x + width, y, z - depth, x + width, y - height, z - depth);
-        // self.add_edge(x, y - height, z - depth, x + width, y - height, z - depth);
+    pub fn add_box(&mut self, edges: &mut Matrix, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
+        self.add_polygon(x + width, y - height, z, x + width, y, z,x, y, z);
+        self.add_polygon(x + width, y - height, z, x, y, z, x, y - height, z);
+        self.add_polygon(x, y - height, z, x, y, z, x, y, z - depth);
+        self.add_polygon(x, y - height, z, x, y, z - depth, x, y - height, z - depth);
+        self.add_polygon(x, y - height, z - depth, x + width, y, z - depth, x, y, z - depth);
+        self.add_polygon(x, y - height, z - depth, x + width, y - height, z - depth, x + width, y, z - depth);
+        self.add_polygon(x + width, y, z - depth, x + width, y - height, z - depth, x + width, y - height, z);
+        self.add_polygon(x + width, y, z - depth, x + width, y - height, z, x + width, y, z);
+        // edges.add_edge(x + width, y - height, z, x + width, y, z - depth);
+        // edges.add_edge(x + width, y - height, z - depth, x + width, y - height, z);
     }
 
     /// add_sphere()
