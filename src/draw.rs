@@ -236,7 +236,7 @@ impl Matrix {
     /// add the points for a rectagular prism whose
     /// upper-left-front corner is (x, y, z) with width,
     /// height and depth dimensions.
-    pub fn add_box(&mut self, edges: &mut Matrix, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
+    pub fn add_box(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
         self.add_polygon(x + width, y - height, z, x + width, y, z,x, y, z);
         self.add_polygon(x + width, y - height, z, x, y, z, x, y - height, z);
         self.add_polygon(x, y - height, z, x, y, z, x, y, z - depth);

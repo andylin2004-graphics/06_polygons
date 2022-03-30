@@ -204,7 +204,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
                     params.push(input.parse().unwrap());
                 }
 
-                polygons.add_box(points, params[0], params[1], params[2], params[3], params[4], params[5]);
+                polygons.add_box(params[0], params[1], params[2], params[3], params[4], params[5]);
             }
             "sphere"=>{
                 i += 1;
