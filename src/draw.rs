@@ -99,40 +99,40 @@ impl Image {
     }
 
     ///======== void draw_polygons() ==========
-    /// 
+    ///
     ///Inputs:   struct matrix *polygons
-    /// 
+    ///
     ///screen s
-    /// 
+    ///
     ///color c
-    /// 
+    ///
     ///Returns:
-    /// 
+    ///
     ///Goes through polygons 3 points at a time, drawing
     ///lines connecting each points to create bounding triangles
     ///====================
-    pub fn draw_polygons( &mut self, polygons: &Matrix, c: Color ) {
+    pub fn draw_polygons(&mut self, polygons: &Matrix, c: Color) {
         for i in (0..polygons.matrix_array[0].len()).step_by(3) {
             self.draw_line(
                 polygons.matrix_array[0][i] as i32,
                 polygons.matrix_array[1][i] as i32,
                 polygons.matrix_array[0][i + 1] as i32,
                 polygons.matrix_array[1][i + 1] as i32,
-                c
+                c,
             );
             self.draw_line(
                 polygons.matrix_array[0][i + 1] as i32,
                 polygons.matrix_array[1][i + 1] as i32,
                 polygons.matrix_array[0][i + 2] as i32,
                 polygons.matrix_array[1][i + 2] as i32,
-                c
+                c,
             );
             self.draw_line(
                 polygons.matrix_array[0][i + 2] as i32,
                 polygons.matrix_array[1][i + 2] as i32,
                 polygons.matrix_array[0][i] as i32,
                 polygons.matrix_array[1][i] as i32,
-                c
+                c,
             );
         }
     }
@@ -237,18 +237,78 @@ impl Matrix {
     /// upper-left-front corner is (x, y, z) with width,
     /// height and depth dimensions.
     pub fn add_box(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
-        self.add_polygon(x + width, y - height, z, x + width, y, z,x, y, z);
+        self.add_polygon(x + width, y - height, z, x + width, y, z, x, y, z);
         self.add_polygon(x + width, y - height, z, x, y, z, x, y - height, z);
         self.add_polygon(x, y - height, z, x, y, z, x, y, z - depth);
         self.add_polygon(x, y - height, z, x, y, z - depth, x, y - height, z - depth);
-        self.add_polygon(x, y - height, z - depth, x + width, y, z - depth, x, y, z - depth);
-        self.add_polygon(x, y - height, z - depth, x + width, y - height, z - depth, x + width, y, z - depth);
-        self.add_polygon(x + width, y, z - depth, x + width, y - height, z - depth, x + width, y - height, z);
-        self.add_polygon(x + width, y, z - depth, x + width, y - height, z, x + width, y, z);
+        self.add_polygon(
+            x,
+            y - height,
+            z - depth,
+            x + width,
+            y,
+            z - depth,
+            x,
+            y,
+            z - depth,
+        );
+        self.add_polygon(
+            x,
+            y - height,
+            z - depth,
+            x + width,
+            y - height,
+            z - depth,
+            x + width,
+            y,
+            z - depth,
+        );
+        self.add_polygon(
+            x + width,
+            y,
+            z - depth,
+            x + width,
+            y - height,
+            z - depth,
+            x + width,
+            y - height,
+            z,
+        );
+        self.add_polygon(
+            x + width,
+            y,
+            z - depth,
+            x + width,
+            y - height,
+            z,
+            x + width,
+            y,
+            z,
+        );
         self.add_polygon(x, y, z, x + width, y, z - depth, x, y, z - depth);
         self.add_polygon(x, y, z, x + width, y, z, x + width, y, z - depth);
-        self.add_polygon(x, y - height, z, x + width, y - height, z - depth, x, y - height, z - depth);
-        self.add_polygon(x, y - height, z, x + width, y - height, z, x + width, y - height, z - depth);
+        self.add_polygon(
+            x,
+            y - height,
+            z,
+            x + width,
+            y - height,
+            z - depth,
+            x,
+            y - height,
+            z - depth,
+        );
+        self.add_polygon(
+            x,
+            y - height,
+            z,
+            x + width,
+            y - height,
+            z,
+            x + width,
+            y - height,
+            z - depth,
+        );
     }
 
     /// add_sphere()
@@ -268,16 +328,58 @@ impl Matrix {
     /// should call generate_sphere to create the necessary points
     pub fn add_sphere(&mut self, cx: f32, cy: f32, cz: f32, r: f32, step: i32) {
         let points_matrix = Matrix::generate_sphere(cx, cy, cz, r, step);
-        for i in 0..points_matrix.matrix_array[0].len() {
-            self.add_edge(
-                points_matrix.matrix_array[0][i],
-                points_matrix.matrix_array[1][i],
-                points_matrix.matrix_array[2][i],
-                points_matrix.matrix_array[0][i],
-                points_matrix.matrix_array[1][i],
-                points_matrix.matrix_array[2][i],
-            );
+        self.add_polygon(
+            points_matrix.matrix_array[0][0],
+            points_matrix.matrix_array[1][0],
+            points_matrix.matrix_array[2][0],
+            points_matrix.matrix_array[0][1],
+            points_matrix.matrix_array[1][1],
+            points_matrix.matrix_array[2][1],
+            points_matrix.matrix_array[0][12],
+            points_matrix.matrix_array[1][12],
+            points_matrix.matrix_array[2][12],
+        );
+        for i in (0..points_matrix.matrix_array[0].len() - 1).step_by(20) {
+            for v in 1..19 {
+                if points_matrix.matrix_array[0].len() - 1 > i + v+ 12{
+                    self.add_polygon(
+                        points_matrix.matrix_array[0][i + v],
+                        points_matrix.matrix_array[1][i + v],
+                        points_matrix.matrix_array[2][i+v],
+                        points_matrix.matrix_array[0][i+v+1],
+                        points_matrix.matrix_array[1][i+v+1],
+                        points_matrix.matrix_array[2][i+v+1],
+                        points_matrix.matrix_array[0][i+v+12],
+                        points_matrix.matrix_array[1][i+v+12],
+                        points_matrix.matrix_array[2][i+v+12],
+                    );
+                }
+                if points_matrix.matrix_array[0].len() - 1 > i + v+ 12{
+                    self.add_polygon(
+                        points_matrix.matrix_array[0][i + v],
+                        points_matrix.matrix_array[1][i + v],
+                        points_matrix.matrix_array[2][i+v],
+                        points_matrix.matrix_array[0][i+v+12],
+                        points_matrix.matrix_array[1][i+v+12],
+                        points_matrix.matrix_array[2][i+v+12],
+                        points_matrix.matrix_array[0][i+v+11],
+                        points_matrix.matrix_array[1][i+v+11],
+                        points_matrix.matrix_array[2][i+v+11],
+                    );
+                }
+            }
         }
+        self.add_polygon(
+            points_matrix.matrix_array[0][0],
+            points_matrix.matrix_array[1][0],
+            points_matrix.matrix_array[2][0],
+            points_matrix.matrix_array[0][1],
+            points_matrix.matrix_array[1][1],
+            points_matrix.matrix_array[2][1],
+            points_matrix.matrix_array[0][12],
+            points_matrix.matrix_array[1][12],
+            points_matrix.matrix_array[2][12],
+        );
     }
 
     /// generate_sphere()
@@ -303,10 +405,14 @@ impl Matrix {
             let mut cir_theta = circ_start;
             while cir_theta < circ_stop {
                 let x = r * (f32::consts::PI * (cir_theta as f32 / step as f32)).cos() + cx;
-                let y =
-                    r * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin() * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).cos() + cy;
-                let z =
-                    r * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin() * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).sin() + cz;
+                let y = r
+                    * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin()
+                    * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).cos()
+                    + cy;
+                let z = r
+                    * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin()
+                    * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).sin()
+                    + cz;
                 matrix.add_point(x, y, z);
                 cir_theta += 1;
             }
@@ -379,9 +485,16 @@ impl Matrix {
         while phi < rot_stop {
             let mut theta = circ_start;
             while theta < circ_stop {
-                let x = (f32::consts::PI * 2.0 * phi as f32 / step as f32).cos() * (circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).cos() + torus_radius) + cx;
-                let y = circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).sin() + cy;
-                let z = -(f32::consts::PI * 2.0 * phi as f32 / step as f32).sin() * (circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).cos() + torus_radius) + cz;
+                let x = (f32::consts::PI * 2.0 * phi as f32 / step as f32).cos()
+                    * (circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).cos()
+                        + torus_radius)
+                    + cx;
+                let y =
+                    circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).sin() + cy;
+                let z = -(f32::consts::PI * 2.0 * phi as f32 / step as f32).sin()
+                    * (circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).cos()
+                        + torus_radius)
+                    + cz;
                 matrix.add_point(x, y, z);
                 theta += 1;
             }
@@ -391,39 +504,47 @@ impl Matrix {
     }
 
     ///======== void add_polygon() ==========
-    /// 
+    ///
     ///Inputs:   struct matrix *polygons
-    /// 
+    ///
     ///            x0: f32
-    /// 
+    ///
     ///            y0: f32
-    /// 
+    ///
     ///            z0: f32
-    /// 
+    ///
     ///            x1: f32
-    /// 
+    ///
     ///            y1: f32
-    /// 
+    ///
     ///            z1: f32
-    /// 
+    ///
     ///            x2: f32
-    /// 
+    ///
     ///            y2: f32
-    /// 
+    ///
     ///            z2: f32
-    /// 
+    ///
     ///Returns:
-    /// 
+    ///
     ///Adds the vertices (x0, y0, z0), (x1, y1, z1)
     ///and (x2, y2, z2) to the polygon matrix. They
     ///define a single triangle surface.
     ///====================
-    pub fn add_polygon( &mut self, 
-        x0: f32, y0: f32, z0: f32, 
-        x1: f32, y1: f32, z1: f32, 
-        x2: f32, y2: f32, z2: f32 ) {
-            self.add_point(x0, y0, z0);
-            self.add_point(x1, y1, z1);
-            self.add_point(x2, y2, z2);
+    pub fn add_polygon(
+        &mut self,
+        x0: f32,
+        y0: f32,
+        z0: f32,
+        x1: f32,
+        y1: f32,
+        z1: f32,
+        x2: f32,
+        y2: f32,
+        z2: f32,
+    ) {
+        self.add_point(x0, y0, z0);
+        self.add_point(x1, y1, z1);
+        self.add_point(x2, y2, z2);
     }
 }
