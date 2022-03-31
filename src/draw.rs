@@ -327,14 +327,30 @@ impl Matrix {
         for lat in lat_start..lat_stop {
             for longt in long_start..long_stop {
                 let index = lat * step as usize + longt;
-                self.add_edge(
-                    points_matrix.matrix_array[0][index],
-                    points_matrix.matrix_array[1][index],
-                    points_matrix.matrix_array[2][index],
-                    points_matrix.matrix_array[0][index],
-                    points_matrix.matrix_array[1][index],
-                    points_matrix.matrix_array[2][index],
-                );
+                if index+step as usize+1 < points_matrix.matrix_array[0].len(){
+                    self.add_polygon(
+                        points_matrix.matrix_array[0][index],
+                        points_matrix.matrix_array[1][index],
+                        points_matrix.matrix_array[2][index],
+                        points_matrix.matrix_array[0][index+1],
+                        points_matrix.matrix_array[1][index+1],
+                        points_matrix.matrix_array[2][index+1],
+                        points_matrix.matrix_array[0][index+step as usize+1],
+                        points_matrix.matrix_array[1][index+step as usize+1],
+                        points_matrix.matrix_array[2][index+step as usize+1],
+                    );
+                    self.add_polygon(
+                        points_matrix.matrix_array[0][index],
+                        points_matrix.matrix_array[1][index],
+                        points_matrix.matrix_array[2][index],
+                        points_matrix.matrix_array[0][index+step as usize+1],
+                        points_matrix.matrix_array[1][index+step as usize+1],
+                        points_matrix.matrix_array[2][index+step as usize+1],
+                        points_matrix.matrix_array[0][index+step as usize],
+                        points_matrix.matrix_array[1][index+step as usize],
+                        points_matrix.matrix_array[2][index+step as usize],
+                    );
+                }
             }
         }
     }
