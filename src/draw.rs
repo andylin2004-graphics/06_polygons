@@ -166,18 +166,14 @@ impl Matrix {
     }
 
     pub fn add_circle(&mut self, cx: f32, cy: f32, cz: f32, r: f32, step: i32) {
-        let mut t = 0;
-        let mut prev_x = 0.0;
-        let mut prev_y = 0.0;
-        while t < step {
-            let x = r * (2.0 * f32::consts::PI * t as f32).cos() + cx;
-            let y = r * (2.0 * f32::consts::PI * t as f32).sin() + cy;
-            if t > 0 {
-                self.add_edge(prev_x, prev_y, cz, x, y, cz);
-            }
+        let mut prev_x = r + cx;
+        let mut prev_y = cy;
+        for t in 0..step + 1 {
+            let x = r * (2.0 * f32::consts::PI * (t as f32 / step as f32)).cos() + cx;
+            let y = r * (2.0 * f32::consts::PI * (t as f32 / step as f32)).sin() + cy;
+            self.add_edge(prev_x, prev_y, cz, x, y, cz);
             prev_x = x;
             prev_y = y;
-            t += 1;
         }
     }
 
@@ -197,24 +193,20 @@ impl Matrix {
     ) {
         let matrix_x = Matrix::generate_curve_coefs(x0, x1, x2, x3, curve_type);
         let matrix_y = Matrix::generate_curve_coefs(y0, y1, y2, y3, curve_type);
-        let mut t = 0;
-        let mut prev_x = 0.0;
-        let mut prev_y = 0.0;
-        while t < step {
-            let x = (matrix_x.matrix_array[0][0] * (t as f32).powi(3))
-                + (matrix_x.matrix_array[1][0] * (t as f32).powi(2))
-                + (matrix_x.matrix_array[2][0] * t as f32)
+        let mut prev_x = x0;
+        let mut prev_y = y0;
+        for t in 0..step + 1 {
+            let x = (matrix_x.matrix_array[0][0] * (t as f32 / step as f32).powi(3))
+                + (matrix_x.matrix_array[1][0] * (t as f32 / step as f32).powi(2))
+                + (matrix_x.matrix_array[2][0] * t as f32 / step as f32)
                 + matrix_x.matrix_array[3][0];
-            let y = (matrix_y.matrix_array[0][0] * (t as f32).powi(3))
-                + (matrix_y.matrix_array[1][0] * (t as f32).powi(2))
-                + (matrix_y.matrix_array[2][0] * t as f32)
+            let y = (matrix_y.matrix_array[0][0] * (t as f32 / step as f32).powi(3))
+                + (matrix_y.matrix_array[1][0] * (t as f32 / step as f32).powi(2))
+                + (matrix_y.matrix_array[2][0] * t as f32 / step as f32)
                 + matrix_y.matrix_array[3][0];
-            if t > 0 {
-                self.add_edge(prev_x, prev_y, 0.0, x, y, 0.0);
-            }
+            self.add_edge(prev_x, prev_y, 0.0, x, y, 0.0);
             prev_x = x;
             prev_y = y;
-            t += 1;
         }
     }
 
@@ -327,59 +319,24 @@ impl Matrix {
 
     /// should call generate_sphere to create the necessary points
     pub fn add_sphere(&mut self, cx: f32, cy: f32, cz: f32, r: f32, step: i32) {
+        let lat_start: usize = 0;
+        let lat_stop = step as usize;
+        let long_start: usize = 0;
+        let long_stop = step as usize;
         let points_matrix = Matrix::generate_sphere(cx, cy, cz, r, step);
-        self.add_polygon(
-            points_matrix.matrix_array[0][0],
-            points_matrix.matrix_array[1][0],
-            points_matrix.matrix_array[2][0],
-            points_matrix.matrix_array[0][1],
-            points_matrix.matrix_array[1][1],
-            points_matrix.matrix_array[2][1],
-            points_matrix.matrix_array[0][12],
-            points_matrix.matrix_array[1][12],
-            points_matrix.matrix_array[2][12],
-        );
-        for i in (0..points_matrix.matrix_array[0].len() - 1).step_by(20) {
-            for v in 1..19 {
-                if points_matrix.matrix_array[0].len() - 1 > i + v+ 12{
-                    self.add_polygon(
-                        points_matrix.matrix_array[0][i + v],
-                        points_matrix.matrix_array[1][i + v],
-                        points_matrix.matrix_array[2][i+v],
-                        points_matrix.matrix_array[0][i+v+1],
-                        points_matrix.matrix_array[1][i+v+1],
-                        points_matrix.matrix_array[2][i+v+1],
-                        points_matrix.matrix_array[0][i+v+12],
-                        points_matrix.matrix_array[1][i+v+12],
-                        points_matrix.matrix_array[2][i+v+12],
-                    );
-                }
-                if points_matrix.matrix_array[0].len() - 1 > i + v+ 12{
-                    self.add_polygon(
-                        points_matrix.matrix_array[0][i + v],
-                        points_matrix.matrix_array[1][i + v],
-                        points_matrix.matrix_array[2][i+v],
-                        points_matrix.matrix_array[0][i+v+12],
-                        points_matrix.matrix_array[1][i+v+12],
-                        points_matrix.matrix_array[2][i+v+12],
-                        points_matrix.matrix_array[0][i+v+11],
-                        points_matrix.matrix_array[1][i+v+11],
-                        points_matrix.matrix_array[2][i+v+11],
-                    );
-                }
+        for lat in lat_start..lat_stop {
+            for longt in long_start..long_stop {
+                let index = lat * step as usize + longt;
+                self.add_edge(
+                    points_matrix.matrix_array[0][index],
+                    points_matrix.matrix_array[1][index],
+                    points_matrix.matrix_array[2][index],
+                    points_matrix.matrix_array[0][index],
+                    points_matrix.matrix_array[1][index],
+                    points_matrix.matrix_array[2][index],
+                );
             }
         }
-        self.add_polygon(
-            points_matrix.matrix_array[0][0],
-            points_matrix.matrix_array[1][0],
-            points_matrix.matrix_array[2][0],
-            points_matrix.matrix_array[0][1],
-            points_matrix.matrix_array[1][1],
-            points_matrix.matrix_array[2][1],
-            points_matrix.matrix_array[0][12],
-            points_matrix.matrix_array[1][12],
-            points_matrix.matrix_array[2][12],
-        );
     }
 
     /// generate_sphere()
@@ -400,23 +357,23 @@ impl Matrix {
         let rot_stop = step;
         let circ_start = 0;
         let circ_stop = step;
-        let mut rot_theta: i32 = rot_start;
-        while rot_theta < rot_stop {
-            let mut cir_theta = circ_start;
-            while cir_theta < circ_stop {
-                let x = r * (f32::consts::PI * (cir_theta as f32 / step as f32)).cos() + cx;
+        let mut rot_t: i32 = rot_start;
+        while rot_t < rot_stop {
+            let mut cir_t = circ_start;
+            while cir_t < circ_stop {
+                let x = r * (f32::consts::PI * (cir_t as f32 / step as f32)).cos() + cx;
                 let y = r
-                    * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin()
-                    * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).cos()
+                    * (f32::consts::PI * (cir_t as f32 / step as f32)).sin()
+                    * (f32::consts::PI * 2.0 * (rot_t as f32 / step as f32)).cos()
                     + cy;
                 let z = r
-                    * (f32::consts::PI * (cir_theta as f32 / step as f32)).sin()
-                    * (f32::consts::PI * 2.0 * (rot_theta as f32 / step as f32)).sin()
+                    * (f32::consts::PI * (cir_t as f32 / step as f32)).sin()
+                    * (f32::consts::PI * 2.0 * (rot_t as f32 / step as f32)).sin()
                     + cz;
                 matrix.add_point(x, y, z);
-                cir_theta += 1;
+                cir_t += 1;
             }
-            rot_theta += 1;
+            rot_t += 1;
         }
         return matrix;
     }
@@ -437,15 +394,22 @@ impl Matrix {
     /// should call generate_torus to create the necessary points
     pub fn add_torus(&mut self, cx: f32, cy: f32, cz: f32, r1: f32, r2: f32, step: i32) {
         let points_matrix = Matrix::generate_torus(cx, cy, cz, r1, r2, step);
-        for i in 0..points_matrix.matrix_array[0].len() {
-            self.add_edge(
-                points_matrix.matrix_array[0][i],
-                points_matrix.matrix_array[1][i],
-                points_matrix.matrix_array[2][i],
-                points_matrix.matrix_array[0][i],
-                points_matrix.matrix_array[1][i],
-                points_matrix.matrix_array[2][i],
-            );
+        let lat_start: usize = 0;
+        let lat_stop = step as usize;
+        let long_start: usize = 0;
+        let long_stop = step as usize;
+        for lat in lat_start..lat_stop {
+            for longt in long_start..long_stop {
+                let index = lat * step as usize + longt;
+                self.add_edge(
+                    points_matrix.matrix_array[0][index],
+                    points_matrix.matrix_array[1][index],
+                    points_matrix.matrix_array[2][index],
+                    points_matrix.matrix_array[0][index],
+                    points_matrix.matrix_array[1][index],
+                    points_matrix.matrix_array[2][index],
+                );
+            }
         }
     }
 
