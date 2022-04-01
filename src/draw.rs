@@ -324,8 +324,8 @@ impl Matrix {
         let long_start: usize = 0;
         let long_stop = step as usize;
         let points_matrix = Matrix::generate_sphere(cx, cy, cz, r, step);
-        for lat in lat_start..lat_stop {
-            for longt in long_start..long_stop {
+        for lat in lat_start..lat_stop+1 {
+            for longt in long_start..long_stop-1 {
                 let index = lat * step as usize + longt;
                 if index+step as usize+1 < points_matrix.matrix_array[0].len(){
                     self.add_polygon(
