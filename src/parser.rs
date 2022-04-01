@@ -214,7 +214,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
                     params.push(input.parse().unwrap());
                 }
 
-                polygons.add_sphere(params[0], params[1], params[2], params[3], 5);
+                polygons.add_sphere(params[0], params[1], params[2], params[3], 20);
             }
             "torus"=>{
                 i += 1;
