@@ -23,6 +23,6 @@ fn main() {
         let mut edges = Matrix::new(0,0);
         let mut polygons = Matrix::new(0,0);
         let mut transform = Matrix::new(4,4);
-        parse_file("script", &mut edges, &mut polygons, &mut transform, &mut screen, color);    
+        parse_file("shape_script", &mut edges, &mut polygons, &mut transform, &mut screen, color);    
     }
 }
