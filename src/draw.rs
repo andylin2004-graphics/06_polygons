@@ -134,6 +134,7 @@ impl Image {
             let vx = 0.0;
             let vy = 0.0;
             let vz = 1.0;
+            // let dot_n_v = 1.0;
             let dot_n_v = nx * vx + ny * vy + nz * vz;
             if dot_n_v > 0.0{
                 self.draw_line(
@@ -253,78 +254,24 @@ impl Matrix {
     /// upper-left-front corner is (x, y, z) with width,
     /// height and depth dimensions.
     pub fn add_box(&mut self, x: f32, y: f32, z: f32, width: f32, height: f32, depth: f32) {
+        // front
         self.add_polygon(x + width, y - height, z, x + width, y, z, x, y, z);
         self.add_polygon(x + width, y - height, z, x, y, z, x, y - height, z);
-        self.add_polygon(x, y - height, z, x, y, z, x, y, z - depth);
-        self.add_polygon(x, y - height, z, x, y, z - depth, x, y - height, z - depth);
-        self.add_polygon(
-            x,
-            y - height,
-            z - depth,
-            x + width,
-            y,
-            z - depth,
-            x,
-            y,
-            z - depth,
-        );
-        self.add_polygon(
-            x,
-            y - height,
-            z - depth,
-            x + width,
-            y - height,
-            z - depth,
-            x + width,
-            y,
-            z - depth,
-        );
-        self.add_polygon(
-            x + width,
-            y,
-            z - depth,
-            x + width,
-            y - height,
-            z - depth,
-            x + width,
-            y - height,
-            z,
-        );
-        self.add_polygon(
-            x + width,
-            y,
-            z - depth,
-            x + width,
-            y - height,
-            z,
-            x + width,
-            y,
-            z,
-        );
-        self.add_polygon(x, y, z, x + width, y, z - depth, x, y, z - depth);
-        self.add_polygon(x, y, z, x + width, y, z, x + width, y, z - depth);
-        self.add_polygon(
-            x,
-            y - height,
-            z,
-            x + width,
-            y - height,
-            z - depth,
-            x,
-            y - height,
-            z - depth,
-        );
-        self.add_polygon(
-            x,
-            y - height,
-            z,
-            x + width,
-            y - height,
-            z,
-            x + width,
-            y - height,
-            z - depth,
-        );
+        // right
+        self.add_polygon(x + width, y, z, x + width, y - height, z - depth, x + width, y, z - depth);
+        self.add_polygon(x + width, y - height, z, x + width, y - height, z - depth, x + width, y, z);
+        // back
+        self.add_polygon(x + width, y - height, z - depth, x, y - height, z - depth, x + width, y, z - depth);
+        self.add_polygon(x, y - height, z - depth, x, y, z - depth, x + width, y, z - depth);
+        // left
+        self.add_polygon(x, y - height, z - depth, x, y, z, x, y, z - depth);
+        self.add_polygon(x, y - height, z - depth, x, y - height, z, x, y, z);
+        // top
+        self.add_polygon(x, y, z - depth, x, y, z, x + width, y, z);
+        self.add_polygon(x + width, y, z, x + width, y, z - depth, x, y, z - depth);
+        // bottom
+        self.add_polygon(x, y - height, z, x, y - height, z - depth, x + width, y - height, z - depth);
+        self.add_polygon(x, y - height, z, x + width, y - height, z - depth, x + width, y - height, z);
     }
 
     /// add_sphere()
