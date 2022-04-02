@@ -116,12 +116,12 @@ impl Image {
             let x0 = polygons.matrix_array[0][i];
             let y0 = polygons.matrix_array[1][i];
             let z0 = polygons.matrix_array[2][i];
-            let x1 = polygons.matrix_array[0][i+1];
-            let y1 = polygons.matrix_array[1][i+1];
-            let z1 = polygons.matrix_array[2][i+1];
-            let x2 = polygons.matrix_array[0][i+2];
-            let y2 = polygons.matrix_array[1][i+2];
-            let z2 = polygons.matrix_array[2][i+2];
+            let x1 = polygons.matrix_array[0][i + 1];
+            let y1 = polygons.matrix_array[1][i + 1];
+            let z1 = polygons.matrix_array[2][i + 1];
+            let x2 = polygons.matrix_array[0][i + 2];
+            let y2 = polygons.matrix_array[1][i + 2];
+            let z2 = polygons.matrix_array[2][i + 2];
             let ax = x1 - x0;
             let ay = y1 - y0;
             let az = z1 - z0;
@@ -136,7 +136,7 @@ impl Image {
             let vz = 1.0;
             // let dot_n_v = 1.0;
             let dot_n_v = nx * vx + ny * vy + nz * vz;
-            if dot_n_v > 0.0{
+            if dot_n_v > 0.0 {
                 self.draw_line(
                     polygons.matrix_array[0][i] as i32,
                     polygons.matrix_array[1][i] as i32,
@@ -258,11 +258,51 @@ impl Matrix {
         self.add_polygon(x + width, y - height, z, x + width, y, z, x, y, z);
         self.add_polygon(x + width, y - height, z, x, y, z, x, y - height, z);
         // right
-        self.add_polygon(x + width, y, z, x + width, y - height, z - depth, x + width, y, z - depth);
-        self.add_polygon(x + width, y - height, z, x + width, y - height, z - depth, x + width, y, z);
+        self.add_polygon(
+            x + width,
+            y,
+            z,
+            x + width,
+            y - height,
+            z - depth,
+            x + width,
+            y,
+            z - depth,
+        );
+        self.add_polygon(
+            x + width,
+            y - height,
+            z,
+            x + width,
+            y - height,
+            z - depth,
+            x + width,
+            y,
+            z,
+        );
         // back
-        self.add_polygon(x + width, y - height, z - depth, x, y - height, z - depth, x + width, y, z - depth);
-        self.add_polygon(x, y - height, z - depth, x, y, z - depth, x + width, y, z - depth);
+        self.add_polygon(
+            x + width,
+            y - height,
+            z - depth,
+            x,
+            y - height,
+            z - depth,
+            x + width,
+            y,
+            z - depth,
+        );
+        self.add_polygon(
+            x,
+            y - height,
+            z - depth,
+            x,
+            y,
+            z - depth,
+            x + width,
+            y,
+            z - depth,
+        );
         // left
         self.add_polygon(x, y - height, z - depth, x, y, z, x, y, z - depth);
         self.add_polygon(x, y - height, z - depth, x, y - height, z, x, y, z);
@@ -270,8 +310,28 @@ impl Matrix {
         self.add_polygon(x, y, z - depth, x, y, z, x + width, y, z);
         self.add_polygon(x + width, y, z, x + width, y, z - depth, x, y, z - depth);
         // bottom
-        self.add_polygon(x, y - height, z, x, y - height, z - depth, x + width, y - height, z - depth);
-        self.add_polygon(x, y - height, z, x + width, y - height, z - depth, x + width, y - height, z);
+        self.add_polygon(
+            x,
+            y - height,
+            z,
+            x,
+            y - height,
+            z - depth,
+            x + width,
+            y - height,
+            z - depth,
+        );
+        self.add_polygon(
+            x,
+            y - height,
+            z,
+            x + width,
+            y - height,
+            z - depth,
+            x + width,
+            y - height,
+            z,
+        );
     }
 
     /// add_sphere()
@@ -354,8 +414,8 @@ impl Matrix {
         let rot_stop = step;
         let circ_start = 0;
         let circ_stop = step;
-        for rot_t in rot_start..rot_stop + 1{
-            for cir_t in circ_start..circ_stop + 1 {
+        for rot_t in rot_start..rot_stop {
+            for cir_t in circ_start..circ_stop {
                 let x = r * (f32::consts::PI * (cir_t as f32 / step as f32)).cos() + cx;
                 let y = r
                     * (f32::consts::PI * (cir_t as f32 / step as f32)).sin()
@@ -391,42 +451,45 @@ impl Matrix {
         let lat_stop = step as usize;
         let long_start: usize = 0;
         let long_stop = step as usize;
-        for lat in lat_start..lat_stop {
-            for longt in long_start..long_stop {
+        for lat in lat_start..lat_stop + 1 {
+            for longt in long_start..long_stop + 1 {
                 let index = lat * step as usize + longt;
                 self.add_polygon(
                     points_matrix.matrix_array[0][index % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[1][index % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[2][index % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[0]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[1]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[2]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[0]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[1]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[2]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                 );
                 self.add_polygon(
-                    points_matrix.matrix_array[0][index % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1][index % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2][index % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[0]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[1]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[2]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                        [(index + 1) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[0]
                         [(index + step as usize) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[1]
                         [(index + step as usize) % points_matrix.matrix_array[0].len()],
                     points_matrix.matrix_array[2]
                         [(index + step as usize) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[0]
+                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[1]
+                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[2]
+                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
                 );
             }
         }
@@ -464,8 +527,8 @@ impl Matrix {
         let circ_start = 0;
         let circ_stop = step;
         let mut matrix = Matrix::new(0, 0);
-        for phi in rot_start..rot_stop {
-            for theta in circ_start..circ_stop {
+        for phi in rot_start..rot_stop + 1 {
+            for theta in circ_start..circ_stop + 1 {
                 let x = (f32::consts::PI * 2.0 * phi as f32 / step as f32).cos()
                     * (circle_radius * (f32::consts::PI * 2.0 * theta as f32 / step as f32).cos()
                         + torus_radius)
@@ -522,7 +585,7 @@ impl Matrix {
         y2: f32,
         z2: f32,
     ) {
-        // check for degen triangles
+        // check for degen triangles, if it is, then don't add
         if (x0, y0, z0) != (x1, y1, z1)
             && (x0, y0, z0) != (x2, y2, z2)
             && (x1, y1, z1) != (x2, y2, z2)
