@@ -113,27 +113,51 @@ impl Image {
     ///====================
     pub fn draw_polygons(&mut self, polygons: &Matrix, c: Color) {
         for i in (0..polygons.matrix_array[0].len()).step_by(3) {
-            self.draw_line(
-                polygons.matrix_array[0][i] as i32,
-                polygons.matrix_array[1][i] as i32,
-                polygons.matrix_array[0][i + 1] as i32,
-                polygons.matrix_array[1][i + 1] as i32,
-                c,
-            );
-            self.draw_line(
-                polygons.matrix_array[0][i + 1] as i32,
-                polygons.matrix_array[1][i + 1] as i32,
-                polygons.matrix_array[0][i + 2] as i32,
-                polygons.matrix_array[1][i + 2] as i32,
-                c,
-            );
-            self.draw_line(
-                polygons.matrix_array[0][i + 2] as i32,
-                polygons.matrix_array[1][i + 2] as i32,
-                polygons.matrix_array[0][i] as i32,
-                polygons.matrix_array[1][i] as i32,
-                c,
-            );
+            let x0 = polygons.matrix_array[0][i];
+            let y0 = polygons.matrix_array[1][i];
+            let z0 = polygons.matrix_array[2][i];
+            let x1 = polygons.matrix_array[0][i+1];
+            let y1 = polygons.matrix_array[1][i+1];
+            let z1 = polygons.matrix_array[2][i+1];
+            let x2 = polygons.matrix_array[0][i+2];
+            let y2 = polygons.matrix_array[1][i+2];
+            let z2 = polygons.matrix_array[2][i+2];
+            let ax = x1 - x0;
+            let ay = y1 - y0;
+            let az = z1 - z0;
+            let bx = x2 - x0;
+            let by = y2 - y0;
+            let bz = z2 - z0;
+            let nx = ay * bz - az * by;
+            let ny = az * bx - ax * bz;
+            let nz = ax * by - ay * bx;
+            let vx = 0.0;
+            let vy = 0.0;
+            let vz = 1.0;
+            let dot_n_v = nx * vx + ny * vy + nz * vz;
+            if dot_n_v > 0.0{
+                self.draw_line(
+                    polygons.matrix_array[0][i] as i32,
+                    polygons.matrix_array[1][i] as i32,
+                    polygons.matrix_array[0][i + 1] as i32,
+                    polygons.matrix_array[1][i + 1] as i32,
+                    c,
+                );
+                self.draw_line(
+                    polygons.matrix_array[0][i + 1] as i32,
+                    polygons.matrix_array[1][i + 1] as i32,
+                    polygons.matrix_array[0][i + 2] as i32,
+                    polygons.matrix_array[1][i + 2] as i32,
+                    c,
+                );
+                self.draw_line(
+                    polygons.matrix_array[0][i + 2] as i32,
+                    polygons.matrix_array[1][i + 2] as i32,
+                    polygons.matrix_array[0][i] as i32,
+                    polygons.matrix_array[1][i] as i32,
+                    c,
+                );
+            }
         }
     }
 }
@@ -325,7 +349,7 @@ impl Matrix {
         let long_stop = step as usize;
         let points_matrix = Matrix::generate_sphere(cx, cy, cz, r, step);
         for lat in lat_start..lat_stop + 1 {
-            for longt in long_start..long_stop - 1 {
+            for longt in long_start..long_stop + 1 {
                 let index = lat * step as usize + longt;
                 self.add_polygon(
                     points_matrix.matrix_array[0][index % points_matrix.matrix_array[0].len()],
@@ -383,8 +407,8 @@ impl Matrix {
         let rot_stop = step;
         let circ_start = 0;
         let circ_stop = step;
-        for rot_t in rot_start..rot_stop {
-            for cir_t in circ_start..circ_stop {
+        for rot_t in rot_start..rot_stop + 1{
+            for cir_t in circ_start..circ_stop + 1 {
                 let x = r * (f32::consts::PI * (cir_t as f32 / step as f32)).cos() + cx;
                 let y = r
                     * (f32::consts::PI * (cir_t as f32 / step as f32)).sin()
@@ -551,15 +575,6 @@ impl Matrix {
         y2: f32,
         z2: f32,
     ) {
-        let ax = x1 - x0;
-        let ay = y1 - y0;
-        let az = z1 - z0;
-        let bx = x2 - x0;
-        let by = y2 - y0;
-        let bz = z2 - z0;
-        let nx = ay * bz - az * by;
-        let ny = az * bx - ax * bz;
-        let nz = bx * by - ay * bx;
         // check for degen triangles
         if (x0, y0, z0) != (x1, y1, z1)
             && (x0, y0, z0) != (x2, y2, z2)
