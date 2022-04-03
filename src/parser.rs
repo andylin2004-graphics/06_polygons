@@ -152,7 +152,12 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
             }
             "save"=>{
                 screen.clear();
-                screen.draw_lines(&points, color);
+                if points.matrix_array.len() > 0{
+                    screen.draw_lines(&points, color);
+                }
+                if polygons.matrix_array.len() > 0{
+                    screen.draw_polygons(&polygons, color);
+                }
                 i += 1;
                 screen.create_file(&*doc_lines[i]);
                 Command::new("magick")
@@ -223,7 +228,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
                     params.push(input.parse().unwrap());
                 }
 
-                polygons.add_torus(params[0], params[1], params[2], params[3], params[4], 10);
+                polygons.add_torus(params[0], params[1], params[2], params[3], params[4], 20);
             }
             _=>{
                 panic!("Invalid command {} at line {}.", doc_lines[i], i+1);
