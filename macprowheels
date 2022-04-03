@@ -1,0 +1,31 @@
+torus
+60 0 -100 5 40
+torus
+185 0 -100 5 40
+torus
+310 0 -100 5 40
+torus
+435 0 -100 5 40
+ident
+rotate
+x 90
+apply
+box
+95 150 0 10 60 10
+box
+220 150 0 10 60 10
+box
+345 150 0 10 60 10
+box
+470 150 0 10 60 10
+ident
+rotate
+y 180
+rotate
+x 20
+move
+500 0 0
+apply
+display
+save
+macprowheels.png
