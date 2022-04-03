@@ -414,8 +414,8 @@ impl Matrix {
         let rot_stop = step;
         let circ_start = 0;
         let circ_stop = step;
-        for rot_t in rot_start..rot_stop {
-            for cir_t in circ_start..circ_stop {
+        for rot_t in rot_start..rot_stop + 1 {
+            for cir_t in circ_start..circ_stop + 1{
                 let x = r * (f32::consts::PI * (cir_t as f32 / step as f32)).cos() + cx;
                 let y = r
                     * (f32::consts::PI * (cir_t as f32 / step as f32)).sin()
