@@ -223,7 +223,7 @@ pub fn parse_file( fname: &str, points: &mut Matrix, polygons: &mut Matrix, tran
                     params.push(input.parse().unwrap());
                 }
 
-                points.add_torus(params[0], params[1], params[2], params[3], params[4], 20);
+                polygons.add_torus(params[0], params[1], params[2], params[3], params[4], 10);
             }
             _=>{
                 panic!("Invalid command {} at line {}.", doc_lines[i], i+1);

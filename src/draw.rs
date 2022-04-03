@@ -455,41 +455,26 @@ impl Matrix {
             for longt in long_start..long_stop + 1 {
                 let index = lat * step as usize + longt;
                 self.add_polygon(
-                    points_matrix.matrix_array[0][index % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1][index % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2][index % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[0]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[0]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[0][index],
+                    points_matrix.matrix_array[1][index],
+                    points_matrix.matrix_array[2][index],
+                    points_matrix.matrix_array[0][index + 1],
+                    points_matrix.matrix_array[1][index + 1],
+                    points_matrix.matrix_array[2][index + 1],
+                    points_matrix.matrix_array[0][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[1][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[2][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
                 );
                 self.add_polygon(
-                    points_matrix.matrix_array[0]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2]
-                        [(index + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[0]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2]
-                        [(index + step as usize) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[0]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[1]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
-                    points_matrix.matrix_array[2]
-                        [(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[0][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[1][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[2][(index + step as usize + 1) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[0][index + 1],
+                    points_matrix.matrix_array[1][index + 1],
+                    points_matrix.matrix_array[2][index + 1],
+                    points_matrix.matrix_array[0][(index + step as usize + 2) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[1][(index + step as usize + 2) % points_matrix.matrix_array[0].len()],
+                    points_matrix.matrix_array[2][(index + step as usize + 2) % points_matrix.matrix_array[0].len()],
                 );
             }
         }
