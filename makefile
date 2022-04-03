@@ -6,3 +6,7 @@ art: build
 
 build:
 	cargo build
+
+clean:
+	cargo clean
+	rm /tmp/imageDisplay*.ppm
