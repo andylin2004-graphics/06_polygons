@@ -571,9 +571,9 @@ impl Matrix {
         z2: f32,
     ) {
         // check for degen triangles, if it is, then don't add
-        if (x0, y0, z0) != (x1, y1, z1)
-            && (x0, y0, z0) != (x2, y2, z2)
-            && (x1, y1, z1) != (x2, y2, z2)
+        if (x0 as i32, y0 as i32, z0 as i32) != (x1 as i32, y1 as i32, z1 as i32)
+            && (x0 as i32, y0 as i32, z0 as i32) != (x2 as i32, y2 as i32, z2 as i32)
+            && (x1 as i32, y1 as i32, z1 as i32) != (x2 as i32, y2 as i32, z2 as i32)
         {
             self.add_point(x0, y0, z0);
             self.add_point(x1, y1, z1);
